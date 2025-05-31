@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-
+import { College, Review } from "../../types";
 import ReviewForm from "./ReviewForm";
 
-async function getCollege(id: string) {
+async function getCollege(id: string): Promise<College | null> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/colleges/${id}`, { cache: "no-store" });
     if (!res.ok) return null;
@@ -13,7 +13,7 @@ async function getCollege(id: string) {
   }
 }
 
-async function getReviews(id: string) {
+async function getReviews(id: string): Promise<Review[]> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/colleges/${id}/reviews`, { cache: "no-store" });
     if (!res.ok) return [];
@@ -47,22 +47,17 @@ export default async function CollegeDetail({ params }: { params: { id: string }
         <h2 className="text-xl font-semibold mb-2">Student Reviews</h2>
         <ul className="space-y-2">
           {reviews.length === 0 && <li className="text-zinc-500">No reviews yet.</li>}
-          {reviews.map((r: { user_name: string; rating: number; comment: string }, i: number) => (
-            <li key={i} className="border rounded p-3 bg-zinc-50 dark:bg-zinc-900">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-bold">{r.user_name}</span>
-                <span className="text-yellow-500">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+          {reviews.map((review: Review) => (
+            <li key={review.id} className="border rounded p-3 bg-zinc-50 dark:bg-zinc-900">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-medium">{review.user_name}</span>
+                <span className="text-yellow-500">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
               </div>
-              <p>{r.comment}</p>
+              <p className="text-zinc-600 dark:text-zinc-300">{review.comment}</p>
             </li>
           ))}
         </ul>
-      </div>
-      <div className="border-t pt-4 mt-6">
-        <h3 className="text-lg font-semibold mb-2">Add Your Review</h3>
-        <div suppressHydrationWarning={true}>
-          <ReviewForm collegeId={params.id} />
-        </div>
+        <ReviewForm collegeId={params.id} />
       </div>
     </div>
   );

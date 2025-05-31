@@ -1,12 +1,19 @@
 import pool from '../../../../db';
 import { NextResponse } from 'next/server';
+import { Review } from '../../../../types';
+
+interface ReviewInput {
+  user: string;
+  rating: number;
+  comment: string;
+}
 
 // Correct handler signature for Next.js 15 dynamic API routes
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split('/').slice(-2, -1)[0];
   try {
-    const { rows } = await pool.query('SELECT * FROM reviews WHERE college_id = $1 ORDER BY created_at DESC', [id]);
+    const { rows } = await pool.query<Review>('SELECT * FROM reviews WHERE college_id = $1 ORDER BY created_at DESC', [id]);
     return NextResponse.json(rows);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch reviews', details: error }, { status: 500 });
@@ -17,9 +24,9 @@ export async function POST(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split('/').slice(-2, -1)[0];
   try {
-    const data = await request.json();
+    const data = await request.json() as ReviewInput;
     const { user, rating, comment } = data;
-    const result = await pool.query(
+    const result = await pool.query<Review>(
       `INSERT INTO reviews (college_id, user_name, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *`,
       [id, user, rating, comment]
     );

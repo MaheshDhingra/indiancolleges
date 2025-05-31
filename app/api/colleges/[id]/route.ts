@@ -1,11 +1,12 @@
 import pool from '../../../db';
 import { NextResponse } from 'next/server';
+import { College } from '../../../types';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const id = url.pathname.split('/').slice(-2, -1)[0];
   try {
-    const { rows } = await pool.query('SELECT * FROM colleges WHERE id = $1', [id]);
+    const { rows } = await pool.query<College>('SELECT * FROM colleges WHERE id = $1', [id]);
     if (rows.length === 0) {
       return NextResponse.json({ error: 'College not found' }, { status: 404 });
     }
