@@ -1,9 +1,23 @@
 'use client';
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+
+interface College {
+  id: number;
+  name: string;
+  type: string;
+  location: string;
+  top_package: string;
+  cutoff: string;
+  description?: string;
+  image: string;
+  rating: number;
+  reviews: number;
+}
 
 export default function CollegeList() {
-  const [colleges, setColleges] = useState<any[]>([]);
+  const [colleges, setColleges] = useState<College[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -16,7 +30,7 @@ export default function CollegeList() {
         setColleges(data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to load colleges");
         setLoading(false);
       });
@@ -66,9 +80,11 @@ export default function CollegeList() {
                 <Link key={college.id} href={`/college/${college.id}`}
                   className="group block bg-zinc-900 border border-zinc-800 rounded-2xl shadow-lg hover:shadow-2xl transition overflow-hidden hover:-translate-y-1">
                   <div className="h-40 w-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300">
-                    <img
+                    <Image
                       src={college.image}
                       alt={college.name}
+                      width={600}
+                      height={160}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />

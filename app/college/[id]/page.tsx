@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 import ReviewForm from "./ReviewForm";
 
@@ -31,7 +32,7 @@ export default async function CollegeDetail({ params }: { params: { id: string }
     <div className="max-w-3xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold mb-2">{college.name}</h1>
       <p className="text-zinc-500 mb-2">{college.type} • {college.location}</p>
-      <img src={college.image} alt={college.name} className="w-full h-64 object-cover rounded-xl mb-4" />
+      <Image src={college.image} alt={college.name} width={800} height={256} className="w-full h-64 object-cover rounded-xl mb-4" />
       <p className="mb-4">{college.description}</p>
       <div className="mb-4">
         <span className="font-semibold">Top Package:</span> {college.top_package}
@@ -46,7 +47,7 @@ export default async function CollegeDetail({ params }: { params: { id: string }
         <h2 className="text-xl font-semibold mb-2">Student Reviews</h2>
         <ul className="space-y-2">
           {reviews.length === 0 && <li className="text-zinc-500">No reviews yet.</li>}
-          {reviews.map((r: any, i: number) => (
+          {reviews.map((r: { user_name: string; rating: number; comment: string }, i: number) => (
             <li key={i} className="border rounded p-3 bg-zinc-50 dark:bg-zinc-900">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-bold">{r.user_name}</span>
