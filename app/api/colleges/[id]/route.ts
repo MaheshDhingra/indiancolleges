@@ -1,10 +1,9 @@
 import pool from '../../../db';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, context: { params: { id: string } }) {
-  // No need to await params, just use context.params.id directly
+export async function GET(_request: Request, { params }: { params: { id: string } }) {
   try {
-    const { rows } = await pool.query('SELECT * FROM colleges WHERE id = $1', [context.params.id]);
+    const { rows } = await pool.query('SELECT * FROM colleges WHERE id = $1', [params.id]);
     if (rows.length === 0) {
       return NextResponse.json({ error: 'College not found' }, { status: 404 });
     }
