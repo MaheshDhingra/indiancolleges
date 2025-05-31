@@ -2,9 +2,10 @@ import pool from '../../../db';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request, context: { params: { id: string } }) {
-  const { params } = context;
+  // Await params if it's a Promise (for Next.js dynamic API compliance)
+  const awaitedParams = typeof context.params.then === 'function' ? await context.params : context.params;
   try {
-    const { rows } = await pool.query('SELECT * FROM colleges WHERE id = $1', [params.id]);
+    const { rows } = await pool.query('SELECT * FROM colleges WHERE id = $1', [awaitedParams.id]);
     if (rows.length === 0) {
       return NextResponse.json({ error: 'College not found' }, { status: 404 });
     }

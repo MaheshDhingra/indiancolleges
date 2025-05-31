@@ -22,11 +22,12 @@ async function getReviews(id: string) {
   }
 }
 
-export default async function CollegeDetail(props: { params: { id: string } }) {
-  const { params } = props;
-  const college = await getCollege(params.id);
+export default async function CollegeDetail({ params }: { params: { id: string } }) {
+  // Await params if it's a Promise (for Next.js dynamic API compliance)
+  const awaitedParams = typeof params.then === 'function' ? await params : params;
+  const college = await getCollege(awaitedParams.id);
   if (!college) return notFound();
-  const reviews = await getReviews(params.id);
+  const reviews = await getReviews(awaitedParams.id);
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
